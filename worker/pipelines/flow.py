@@ -4,6 +4,7 @@
 
 from datetime import datetime
 
+INDEX   = 0
 SEGTYPE = 'netflow segments'
 
 def create_dstream(ssc, zk_quorum, group_id, topics):

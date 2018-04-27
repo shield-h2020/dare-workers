@@ -4,12 +4,12 @@
 
 from datetime import datetime
 
-INDEX   = 0
-SEGTYPE = 'pcap segments'
+INDEX   = 6
+SEGTYPE = 'ids packet segments'
 
 def create_dstream(ssc, zk_quorum, group_id, topics):
     '''
-        Create an input stream that pulls pcap messages from Kafka.
+        Create an input stream that pulls ids packet messages from Kafka.
 
     :param ssc      : :class:`pyspark.streaming.context.StreamingContext` object.
     :param zk_quorum: Zookeeper quorum (host[:port],...).
@@ -35,36 +35,29 @@ def stream_parser(fields):
     :returns     : A list of typecast-ed fields, according to the schema table.
     :rtype       : ``list``
     '''
-    dt = datetime.fromtimestamp(float(fields[2]))
-
+    dt = datetime.utcfromtimestamp(float(fields[7]))
     return [
-        '{0}, {1}'.format(fields[0], fields[1]),
-        long(float(fields[2])),
-        int(fields[3]),
-        fields[5], fields[4], fields[6], fields[8],
-        0 if fields[7] == '' else int(fields[7]),
-        0 if fields[8] == '' else int(fields[9]),
-        fields[10],
-        dt.year, dt.month, dt.day, dt.hour
+        fields[1],
+        int(fields[2]), int(fields[3]), int(fields[4]), int(fields[5]), int(fields[6]),
+        float(fields[7]),
+        int(dt.year), int(dt.month), int(dt.day), int(dt.hour)
     ]
 
 def struct_type():
     '''
         Return the data type that represents a row from the received data list.
     '''
-    from pyspark.sql.types import (StructType, StructField, StringType, IntegerType,
-                                    LongType, ShortType)
+    from pyspark.sql.types import (StructType, StructField, StringType, ShortType,
+                                    IntegerType, FloatType)
+
     return StructType([
-        StructField('frame_time', StringType(), True),
-        StructField('unix_tstamp', LongType(), True),
-        StructField('frame_len', IntegerType(), True),
-        StructField('ip_dst', StringType(), True),
-        StructField('ip_src', StringType(), True),
-        StructField('dns_qry_name', StringType(), True),
-        StructField('dns_qry_class', StringType(), True),
-        StructField('dns_qry_type', IntegerType(), True),
-        StructField('dns_qry_rcode', IntegerType(), True),
-        StructField('dns_a', StringType(), True),
+        StructField('data', StringType(), True),
+        StructField('event_id', IntegerType(), True),
+        StructField('event_second', IntegerType(), True),
+        StructField('length', IntegerType(), True),
+        StructField('linktype', ShortType(), True),
+        StructField('sensor_id', IntegerType(), True),
+        StructField('unix_tstamp', FloatType(), True),
         StructField('y', ShortType(), True), StructField('m', ShortType(), True),
         StructField('d', ShortType(), True), StructField('h', ShortType(), True)
     ])

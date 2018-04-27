@@ -73,14 +73,12 @@ Before you start using the Streaming Worker, you should print the usage message 
      -l STRING, --log-level STRING         determine the level of the logger
      -v, --version                         show program's version number and exit
 
-Required Arguments:
+    Required Arguments:
      -p INTEGER, --partition INTEGER       partition number to consume
      --topic STRING                        topic to listen for new messages
      -t STRING, --type STRING              type of the data that will be ingested
 
-END
-
-The only mandatory arguments for the Streaming Worker are the topic, the partition and the type of the pipeline (`flow`, `dns` or `proxy`). Streaming Worker _does not create a new topic_, so you have to pass _an existing one_. By default, it loads configuration parameters from the `~/.d-collector.json` file, but you can override it with `-c FILE, --config-file FILE` option.
+The only mandatory arguments for the Streaming Worker are the topic, the partition and the type of the pipeline (`dns`, `flow`, `ids_event`, `ids_packet` or `proxy`). Streaming Worker _does not create a new topic_, so you have to pass _an existing one_. By default, it loads configuration parameters from the `~/.d-collector.json` file, but you can override it with `-c FILE, --config-file FILE` option.
 
 ### Run `run.sh` Script
 To start Streaming Worker:<br />
@@ -153,8 +151,6 @@ Before you start using the Simple Worker, you should print the usage message and
       -d STRING, --hdfs-directory STRING  destination folder in HDFS
       -p INTEGER, --partition INTEGER     partition number to consume
       --topic STRING                      topic to listen for new messages
-
-END
 
 The only mandatory arguments for the Simple Worker are the destination folder in HDFS, the number of the partition and the Kafka topic. Simple Worker _does not create a new topic_, so you have to pass _an existing one_. By default, it loads configuration parameters from the `~/.worker.json` file, but you can override it with `-c FILE, --config-file FILE` option.
 

@@ -5,6 +5,7 @@
 from datetime import datetime
 from shlex    import shlex
 
+INDEX   = 0
 SEGTYPE = 'proxy-log segments'
 
 def _analyze(line):

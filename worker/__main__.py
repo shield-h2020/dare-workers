@@ -68,7 +68,7 @@ def parse_args():
 
     return parser.parse_args()
 
-def store(rdd, hsc, table, topic, schema=None, segtype='segments'):
+def store(rdd, hsc, table, topic, schema=None, segtype='segments', index=0):
     '''
         Interface for saving the content of the streaming :class:`DataFrame` out into
     Hive storage.
@@ -80,6 +80,7 @@ def store(rdd, hsc, table, topic, schema=None, segtype='segments'):
     :param schema : The schema of this :class:`DataFrame` as a
                     :class:`pyspark.sql.types.StructType`.
     :param segtype: The type of the received segments.
+    :param index  : Index of array that identify the segment.
     '''
     logger = logging.getLogger('SHIELD.WORKER.STREAMING')
 
@@ -91,7 +92,8 @@ def store(rdd, hsc, table, topic, schema=None, segtype='segments'):
     hsc.setConf('hive.exec.dynamic.partition.mode', 'nonstrict')
 
     logger.info('Received {0} from topic. [Rows: {1}]'.format(segtype, rdd.count()))
-    logger.info('Create distributed collection for partition "{0}".'.format(rdd.first()[0]))
+    logger.info('Create distributed collection for partition "{0}".'
+        .format(rdd.first()[index]))
 
     df = hsc.createDataFrame(rdd, schema)
     df.write.format('parquet').mode('append').insertInto(table)
@@ -148,7 +150,8 @@ class StreamingWorker:
         dstream.map(lambda x: module.stream_parser(x))\
             .filter(lambda x: bool(x))\
             .foreachRDD(lambda x:
-                store(x, self._hive_context, table, topic, schema, module.SEGTYPE))
+                store(x, self._hive_context, table, topic, schema,
+                    module.SEGTYPE, module.INDEX))
 
         self._streaming.start()
         self._logger.info('Start the execution of the streams.')
