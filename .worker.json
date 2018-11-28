@@ -1,0 +1,13 @@
+{
+    "consumer": {
+        "bootstrap_servers": ["kafka_server:kafka_port"],
+        "group_id": ""
+    },
+    "database": "dbname",
+    "kerberos": {
+        "kinit": "/usr/bin/kinit",
+        "principal": "user",
+        "keytab": "/opt/security/user.keytab"
+    },
+    "zkQuorum": "zk_server:zk_port"
+}
